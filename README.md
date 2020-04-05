@@ -4,8 +4,10 @@
 - [MariaDB](https://hub.docker.com/_/mariadb)
 - [Wordpress](https://hub.docker.com/_/wordpress)
 - [FTP](https://hub.docker.com/r/stilliard/pure-ftpd/)
-- [Traefik](https://hub.docker.com/_/traefik)
+- [Traefik (reverse proxy)](https://hub.docker.com/_/traefik)
 
+# Setup server and install and setup Traefik
+Before use, first setup your server and install and setup Traefik. Use this [tutorial](https://www.digitalocean.com/community/tutorials/how-to-use-traefik-as-a-reverse-proxy-for-docker-containers-on-ubuntu-18-04)(Only the server setup and Traefik part)
 
 # Env
 copy the example file to .env and change the values
