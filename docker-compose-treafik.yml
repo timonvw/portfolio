@@ -1,0 +1,92 @@
+version: '3.3'
+
+networks:
+  web:
+    external: true
+  internal:
+    external: false
+
+services:
+  db:
+    container_name: ${CONTAINER_DB_NAME}
+    image: mariadb:${DB_VERSION}
+    volumes:
+      - ${DB_PATH}:/var/lib/mysql
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+    networks:
+      - internal
+    labels:
+      - traefik.enable=false
+
+ wordpress:
+    container_name: ${CONTAINER_WP_NAME}
+    image: wordpress:${WP_VERSION}
+    ports:
+      - "8000:80"
+    restart: unless-stopped
+    volumes:
+      - ${WP_CORE}:/var/www/html
+      - ${WP_CONTENT}:/var/www/html/wp-content
+    environment:
+      WORDPRESS_DB_HOST: ${WP_DB_HOST}
+      WORDPRESS_DB_USER: ${MYSQL_USER}
+      WORDPRESS_DB_PASSWORD: ${MYSQL_PASSWORD}
+      WORDPRESS_DB_NAME: ${MYSQL_DATABASE}
+      WORDPRESS_TABLE_PREFIX: ${WORDPRESS_TABLE_PREFIX}
+    labels:
+      - traefik.backend=${WP_TREAFIK_BACKEND}
+      - traefik.frontend.rule=${WP_TREAFIK_FRONTEND_RULE}
+      - traefik.docker.network=${WP_TREAFIK_DOCKER_NETWORK}
+      - traefik.port=${WP_TREAFIK_PORT}
+    networks:
+      - internal
+      - web
+    logging:
+      options:
+        max-size: ${LOGGING_OPTIONS_MAX_SIZE:-200k}
+    depends_on:
+      - db
+
+  ftp:
+    container_name: ${CONTAINER_FTP_NAME}
+    image: stilliard/pure-ftpd:latest
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+    environment:
+      PUBLICHOST: ${FTP_PUBLIC_HOST}
+      FTP_USER_NAME: ${FTP_USER}
+      FTP_USER_PASS: ${FTP_PASSWORD}
+      FTP_USER_HOME: "/var/www/html"
+      FTP_USER_UID: 33
+      FTP_USER_GID: 33
+    networks:
+      - internal
+    labels:
+      - traefik.enable=false
+    volumes:
+      - ${WP_CORE}:/var/www/html
+      - ${WP_CONTENT}:/var/www/html/wp-content
+     ports:
+      - target: 21
+        published: 21
+        protocol: tcp
+        mode: host
+      - target: 30000
+        published: 30000
+        protocol: tcp
+        mode: host
+
+volumes:
+  db_data: {}
+  wp_data: {}
+
+
+
+
