@@ -1,5 +1,11 @@
 version: '3.3'
-    
+
+networks:
+  web:
+    external: true
+  internal:
+    external: false
+
 services:
   db:
     container_name: ${CONTAINER_DB_NAME}
@@ -12,8 +18,12 @@ services:
       MYSQL_DATABASE: ${MYSQL_DATABASE}
       MYSQL_USER: ${MYSQL_USER}
       MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+    networks:
+      - internal
+    labels:
+      - traefik.enable=false
 
-  wordpress:
+ wordpress:
     container_name: ${CONTAINER_WP_NAME}
     image: wordpress:${WP_VERSION}
     ports:
@@ -33,6 +43,9 @@ services:
       - traefik.frontend.rule=${WP_TREAFIK_FRONTEND_RULE}
       - traefik.docker.network=${WP_TREAFIK_DOCKER_NETWORK}
       - traefik.port=${WP_TREAFIK_PORT}
+    networks:
+      - internal
+      - web
     logging:
       options:
         max-size: ${LOGGING_OPTIONS_MAX_SIZE:-200k}
@@ -53,10 +66,14 @@ services:
       FTP_USER_HOME: "/var/www/html"
       FTP_USER_UID: 33
       FTP_USER_GID: 33
+    networks:
+      - internal
+    labels:
+      - traefik.enable=false
     volumes:
       - ${WP_CORE}:/var/www/html
       - ${WP_CONTENT}:/var/www/html/wp-content
-    ports:
+     ports:
       - target: 21
         published: 21
         protocol: tcp
@@ -69,3 +86,7 @@ services:
 volumes:
   db_data: {}
   wp_data: {}
+
+
+
+

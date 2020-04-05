@@ -13,11 +13,6 @@ Before use, first setup your server and install and setup Traefik. Use this [tut
 copy the example file to .env and change the values
 
     $ cp .env.example .env
-
-# Docker-compose.yml
-Use the docker-compose-treafik.yml on server and the normal one on windows and change the name on the server
-
-    $ cp docker-compose.treafik.yml docker-compose.yml
     
 # Run
 start server
