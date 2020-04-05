@@ -4,6 +4,7 @@
 - [MariaDB](https://hub.docker.com/_/mariadb)
 - [Wordpress](https://hub.docker.com/_/wordpress)
 - [FTP](https://hub.docker.com/r/stilliard/pure-ftpd/)
+- [Traefik](https://hub.docker.com/_/traefik)
 
 
 # Env

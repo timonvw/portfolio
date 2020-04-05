@@ -1,5 +1,5 @@
 version: '3.3'
-
+    
 services:
   db:
     container_name: ${CONTAINER_DB_NAME}
@@ -28,6 +28,11 @@ services:
       WORDPRESS_DB_PASSWORD: ${MYSQL_PASSWORD}
       WORDPRESS_DB_NAME: ${MYSQL_DATABASE}
       WORDPRESS_TABLE_PREFIX: ${WORDPRESS_TABLE_PREFIX}
+    labels:
+      - traefik.backend=${WP_TREAFIK_BACKEND}
+      - traefik.frontend.rule=${WP_TREAFIK_FRONTEND_RULE}
+      - traefik.docker.network=${WP_TREAFIK_DOCKER_NETWORK}
+      - traefik.port=${WP_TREAFIK_PORT}
     logging:
       options:
         max-size: ${LOGGING_OPTIONS_MAX_SIZE:-200k}
